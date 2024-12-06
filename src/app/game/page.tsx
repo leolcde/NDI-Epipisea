@@ -1,19 +1,13 @@
 'use client';
 import React, { useState } from "react";
-// import { useState } from "react";
-
-interface trash {
-    color: string
-    width: number
-    height: number
-    start: number
-}
+import { useCallback } from "react";
 
 function CreateTrash(
     width: number,
     height:number,
     color: string,
     start: number,
+    top: number,
     handleMouseEnter: () => void,
     handleMouseLeave: () => void
 ) {
@@ -25,7 +19,7 @@ function CreateTrash(
             backgroundColor: color,
             borderRadius: '50%',
             left: start,
-            top: '5vh'
+            top: top
         }}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -34,9 +28,31 @@ function CreateTrash(
 
 export default function Home() {
     const [start, setStart] = useState(0)
-    const [color, setColor] = useState('blue');
-    const moveTrash = () => {
-        setStart((prevStart) => prevStart + 5);
+    const [top, setTop] = useState(300);
+    const [isGrabed, setIsGrabed] = useState(false)
+    const [score, setScore] = useState(0)
+    const moveTrash = useCallback(() => {
+        setStart((prevStart) => {
+            if (prevStart > window.innerWidth) {
+                return 0;
+            }
+            return prevStart + 5;
+        });
+
+        if (isGrabed) {
+            setTop((prevTop) => prevTop - 5);
+        }
+        if (top <= 0) {
+            setTop(300);
+            setStart(0);
+            setScore((score) => score + 1)
+        }
+    }, [isGrabed, top, start, score]);
+    const handleMouseLeave = () => {
+        setIsGrabed(false)
+    }
+    const handleMouseEnter = () => {
+        setIsGrabed(true)
     };
 
     React.useEffect(() => {
@@ -44,15 +60,7 @@ export default function Home() {
             moveTrash();
         }, 20);
         return () => clearInterval(interval);
-    }, []);
-
-    const handleMouseEnter = () => {
-        setColor('black')
-    };
-
-    const handleMouseLeave = () => {
-        setColor('blue')
-    }
+    }, [moveTrash]);
 
     return (
         <>
@@ -66,6 +74,20 @@ export default function Home() {
                 paddingLeft:'10vh'
             }}
         >
+            <div
+                style={{
+                    position: 'absolute',
+                    top: '10px',
+                    right: '10px',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    color: 'white',
+                    padding: '10px',
+                    borderRadius: '5px',
+                    fontSize: '18px'
+                }}
+            >
+                Score: {score}
+            </div>
             <div
                 style={{
                     borderRadius:'50%',
@@ -82,7 +104,7 @@ export default function Home() {
                 position: 'relative'
             }}
             >
-            {CreateTrash(10, 10, color, start, handleMouseEnter, handleMouseLeave)}
+            {CreateTrash(10, 10, 'yellow', start, top, handleMouseEnter, handleMouseLeave)}
         </div>
         </>
     );
