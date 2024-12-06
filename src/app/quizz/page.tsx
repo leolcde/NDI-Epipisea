@@ -1,5 +1,6 @@
 import React from 'react';
 import QuizComponent from './QuizComponent';
+import './QuizComponent.css';
 
 const QuizPage: React.FC = () => {
   return (

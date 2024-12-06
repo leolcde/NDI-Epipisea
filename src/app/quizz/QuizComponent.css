@@ -1,3 +1,16 @@
+body {
+  background: url('/sea.jpg') no-repeat center center fixed;
+  background-size: cover;
+}
+
+h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+
 .quiz-component {
     font-family: Arial, sans-serif;
     max-width: 600px;
@@ -54,4 +67,72 @@
   text-align: center;
   font-size: 1.5em;
   color: #333;
+}
+
+.answer-section button.correct {
+  background-color: green;
+  color: white;
+}
+
+.answer-section button.incorrect {
+  background-color: red;
+  color: white;
+}
+
+.score-section {
+  text-align: center;
+  font-size: 1.5em;
+  color: #333;
+}
+
+.score {
+  font-weight: bold;
+}
+
+.show-answers-button {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  font-size: 1em;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.show-answers-button:hover {
+  background-color: #0056b3;
+}
+
+.answers-summary {
+  margin-top: 20px;
+  text-align: left;
+}
+
+.answer-summary {
+  margin-bottom: 10px;
+}
+
+.answer-summary p {
+  margin: 0;
+  color: black;
+}
+
+.questions {
+  font-weight: bold;
+}
+
+.good-answers .good-answer {
+  font-weight: bold;
+  color: green;
+}
+
+.correct-answer {
+  color: green;
+}
+
+.incorrect-answer {
+  color: red;
 }
