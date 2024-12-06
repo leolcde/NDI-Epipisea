@@ -4,55 +4,77 @@ import { useCallback } from "react";
 
 function CreateTrash(
     width: number,
-    height:number,
-    color: string,
+    height: number,
+    image: string,
     start: number,
     top: number,
     handleMouseEnter: () => void,
     handleMouseLeave: () => void
 ) {
-    return <div
+    return <img
+        src={image}
         style={{
             position: 'absolute',
             width: width.toString() + 'vh',
             height: height.toString() + 'vh',
-            backgroundColor: color,
-            borderRadius: '50%',
             left: start,
-            top: top
+            top: top,
+            rotate: image == "/assets/bouteille-en-verre.png" ? "0deg" : "-60deg"
         }}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-    ></div>
+    ></img>
 }
 
 export default function Home() {
-    const [start, setStart] = useState(0)
-    const [top, setTop] = useState(300);
-    const [isGrabed, setIsGrabed] = useState(false)
+    const [trashs, setTrashs] = useState([
+        {start: 0, top: Math.random() * (window.innerHeight * 0.7), speed: 5, isGrabed: false, image: "/assets/leau.png"},
+        {start: 0, top: Math.random() * (window.innerHeight * 0.7), speed: 7, isGrabed: false, image: "/assets/bouteille-en-verre.png"}
+    ])
     const [score, setScore] = useState(0)
-    const moveTrash = useCallback(() => {
-        setStart((prevStart) => {
-            if (prevStart > window.innerWidth) {
-                return 0;
-            }
-            return prevStart + 5;
-        });
 
-        if (isGrabed) {
-            setTop((prevTop) => prevTop - 5);
-        }
-        if (top <= 0) {
-            setTop(300);
-            setStart(0);
-            setScore((score) => score + 1)
-        }
-    }, [isGrabed, top, start, score]);
-    const handleMouseLeave = () => {
-        setIsGrabed(false)
-    }
-    const handleMouseEnter = () => {
-        setIsGrabed(true)
+    const moveTrash = useCallback(() => {
+        setTrashs((trashBins) =>
+            trashBins.map((trash) => {
+                let newStart = trash.start + trash.speed;
+                let newTop = trash.isGrabed ? trash.top - 5 : trash.top;
+
+                if (newTop <= 0) {
+                    newStart = 0;
+                    newTop = Math.random() * (window.innerHeight * 0.7);
+                    setScore((prevScore) => prevScore + 1);
+                }
+
+                if (newStart > (window.innerWidth - (0.12 * window.innerWidth / 2))) {
+                    newStart = 0;
+                }
+
+                return { ...trash, start: newStart, top: newTop };
+            })
+        );
+    }, []);
+
+
+    const handleMouseEnter = (index: number) => {
+        setTrashs((prevTrashBins) =>
+            prevTrashBins.map((trash, i) => {
+                if (i === index)
+                    return { ...trash, isGrabed: true };
+                else
+                    return trash
+            })
+        );
+    };
+
+    const handleMouseLeave = (index: number) => {
+        setTrashs((prevTrashBins) =>
+            prevTrashBins.map((trash, i) => {
+                if (i === index)
+                    return { ...trash, isGrabed: false };
+                else
+                    return trash
+            })
+        );
     };
 
     React.useEffect(() => {
@@ -104,7 +126,19 @@ export default function Home() {
                 position: 'relative'
             }}
             >
-            {CreateTrash(10, 10, 'yellow', start, top, handleMouseEnter, handleMouseLeave)}
+                {trashs.map((trash, index) =>
+                    <React.Fragment key={index}>
+                    {CreateTrash(
+                        10,
+                        10,
+                        trash.image,
+                        trash.start,
+                        trash.top,
+                        () => handleMouseEnter(index),
+                        () => handleMouseLeave(index)
+                    )}
+                </React.Fragment>
+                )}
         </div>
         </>
     );
