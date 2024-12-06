@@ -9,7 +9,14 @@ interface trash {
     start: number
 }
 
-function CreateTrash(width: number, height:number, color: string, start: number) {
+function CreateTrash(
+    width: number,
+    height:number,
+    color: string,
+    start: number,
+    handleMouseEnter: () => void,
+    handleMouseLeave: () => void
+) {
     return <div
         style={{
             position: 'absolute',
@@ -20,15 +27,16 @@ function CreateTrash(width: number, height:number, color: string, start: number)
             left: start,
             top: '5vh'
         }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
     ></div>
 }
 
 export default function Home() {
-    const MoveTrash = CreateTrash(10, 10, 'blue', 0)
     const [start, setStart] = useState(0)
-
+    const [color, setColor] = useState('blue');
     const moveTrash = () => {
-        setStart((prevStart) => prevStart + 3);
+        setStart((prevStart) => prevStart + 5);
     };
 
     React.useEffect(() => {
@@ -37,6 +45,14 @@ export default function Home() {
         }, 20);
         return () => clearInterval(interval);
     }, []);
+
+    const handleMouseEnter = () => {
+        setColor('black')
+    };
+
+    const handleMouseLeave = () => {
+        setColor('blue')
+    }
 
     return (
         <>
@@ -66,7 +82,7 @@ export default function Home() {
                 position: 'relative'
             }}
             >
-            {CreateTrash(10, 10, 'yellow', start)}
+            {CreateTrash(10, 10, color, start, handleMouseEnter, handleMouseLeave)}
         </div>
         </>
     );
